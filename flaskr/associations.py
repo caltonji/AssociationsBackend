@@ -43,9 +43,10 @@ def append_to_scores(scores, probs):
 
 def remove_stem_matches(scores, words):
     # stemmer = get_stemmer()
+    stemmed_words = [stemmer.stem(word) for word in words]
     new_scores = {}
     for word in scores:
-        if stemmer.stem(word) not in words:
+        if stemmer.stem(word) not in stemmed_words:
             new_scores[word] = scores[word]
     return new_scores
 
