@@ -9,8 +9,12 @@ import random
 
 bp = Blueprint('associations', __name__)
 
+has_run_setup = False
+
 @bp.route('/random', methods=["GET"])
 def get_random_words():
+    if not has_run_setup:
+        setup_associations_models()
     validate_request_args(['count'])
     word_count = int(request.args['count'])
     words = random.sample(random_words, word_count)
@@ -18,6 +22,8 @@ def get_random_words():
 
 @bp.route('/associations', methods=["GET"])
 def get_association():
+    if not has_run_setup:
+        setup_associations_models()
     validate_request_args(['words'])
     words = parse_words()
     
@@ -73,7 +79,8 @@ def get_nearest_word(words):
     for test in test_items:
         positive_words = test["positive"] + words
         negative_words = test["negative"]
-        append_to_scores(scores, model.most_similar(positive=positive_words, negative=negative_words))
+        # add this back later
+        # append_to_scores(scores, model.most_similar(positive=positive_words, negative=negative_words))
         append_to_scores(scores, word2vec_model.most_similar(positive=positive_words, negative=negative_words))
     scores = remove_stem_matches(scores, words)
     
@@ -83,10 +90,12 @@ def setup_associations_models():
     print("setting up models")
     global stemmer
     stemmer = PorterStemmer()
-    global model
-    model = api.load("glove-twitter-25")
+    # global model
+    # model = api.load("glove-twitter-25")
     global word2vec_model
     word2vec_model = api.load('word2vec-google-news-300')
     global random_words
     random_words = list(word2vec_model.key_to_index.keys())[250:2000]
     random_words = [word.lower() for word in random_words if word.isalpha()]
+    global has_run_setup
+    has_run_setup = True

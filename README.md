@@ -1,14 +1,23 @@
 # AssociationsBackend
 
-## Setup
+### Running Locally
 
 1. `git clone https://github.com/caltonji/AssociationsBackend.git`
 2. `cd AssociationsBackend`
 3. `conda create --name associations_env --file requirements.txt`
-4. `export FLASK_APP=application`
-5. `flask run`
+4. `conda activate associations_env`
+5. `export FLASK_APP=application`
+6. `flask run`
 
-## API Documentation
+### Deploying
+
+1. `az login`
+2. `az account set --subscription "Visual Studio Enterprise Subscription"`
+3. `az webapp up --sku B3 --name "AssociationsBackendB1"`
+
+Deployed publicly at https://associationsbackendb1.azurewebsites.net (Last deployed 7/25/21. No active maintenance.)
+
+# API Documentation
 
 ## Get Random Words
 

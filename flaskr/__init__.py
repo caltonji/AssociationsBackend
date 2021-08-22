@@ -13,7 +13,7 @@ def create_app(test_config=None):
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
     
-    setup_associations_models()
+    # setup_associations_models()
 
     # Setup storage
     # with app.app_context():
