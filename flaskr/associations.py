@@ -4,26 +4,20 @@ from flask import (
 from flaskr import model_factory
 from flaskr.utils import validate_request_args
 import gensim.downloader as api
-from nltk.stem import PorterStemmer
 import random
 
 bp = Blueprint('associations', __name__)
 
-has_run_setup = False
-
 @bp.route('/random', methods=["GET"])
 def get_random_words():
-    if not has_run_setup:
-        setup_associations_models()
     validate_request_args(['count'])
     word_count = int(request.args['count'])
+    random_words = model_factory.get_random_words()
     words = random.sample(random_words, word_count)
     return jsonify(words)
 
 @bp.route('/associations', methods=["GET"])
 def get_association():
-    if not has_run_setup:
-        setup_associations_models()
     validate_request_args(['words'])
     words = parse_words()
     
@@ -48,7 +42,7 @@ def append_to_scores(scores, probs):
     return scores
 
 def remove_stem_matches(scores, words):
-    # stemmer = get_stemmer()
+    stemmer = model_factory.get_stemmer()
     stemmed_words = [stemmer.stem(word) for word in words]
     new_scores = {}
     for word in scores:
@@ -58,8 +52,8 @@ def remove_stem_matches(scores, words):
 
 def get_nearest_word(words):
     scores = {}
-    # model = get_twitter_model()
-    # word2vec_model = get_news_model()
+    model1 = model_factory.get_twitter_model()
+    model2 = model_factory.get_news_model()
 #     append_to_scores(scores, model.most_similar(positive=words))
 #     append_to_scores(scores, word2vec_model.most_similar(positive=words))
     test_items = [
@@ -79,23 +73,9 @@ def get_nearest_word(words):
     for test in test_items:
         positive_words = test["positive"] + words
         negative_words = test["negative"]
-        # add this back later
-        # append_to_scores(scores, model.most_similar(positive=positive_words, negative=negative_words))
-        append_to_scores(scores, word2vec_model.most_similar(positive=positive_words, negative=negative_words))
+        append_to_scores(scores, model1.most_similar(positive=positive_words, negative=negative_words))
+        append_to_scores(scores, model2.most_similar(positive=positive_words, negative=negative_words))
+    # this is O(N) when it could be O(1)
     scores = remove_stem_matches(scores, words)
     
     return max(scores, key=scores.get)
-
-def setup_associations_models():
-    print("setting up models")
-    global stemmer
-    stemmer = PorterStemmer()
-    # global model
-    # model = api.load("glove-twitter-25")
-    global word2vec_model
-    word2vec_model = api.load('word2vec-google-news-300')
-    global random_words
-    random_words = list(word2vec_model.key_to_index.keys())[250:2000]
-    random_words = [word.lower() for word in random_words if word.isalpha()]
-    global has_run_setup
-    has_run_setup = True

@@ -1,9 +1,8 @@
 import os, uuid
 
 from flask import Flask
-from flaskr.model_factory import get_stemmer, get_twitter_model, get_news_model
+from flaskr.model_factory import get_stemmer, get_twitter_model, get_news_model, get_random_words
 from flask_cors import CORS
-from flaskr.associations import setup_associations_models
 
 def create_app(test_config=None):
     # create and configure the app
@@ -12,14 +11,13 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
-    
-    # setup_associations_models()
 
     # Setup storage
-    # with app.app_context():
-    #     get_twitter_model()
-    #     get_news_model()
-    #     get_stemmer()
+    with app.app_context():
+        get_twitter_model()
+        get_news_model()
+        get_stemmer()
+        get_random_words()
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
