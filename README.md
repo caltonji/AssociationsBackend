@@ -15,7 +15,7 @@
 2. `az account set --subscription "Visual Studio Enterprise Subscription"`
 3. `az webapp up --sku B3 --name "AssociationsBackendB1"`
 
-Deployed publicly at https://associationsbackendb1.azurewebsites.net (Last deployed 7/25/21. No active maintenance.)
+Deployed publicly at https://associationsbackendb1.azurewebsites.net (Last deployed 11/24/21. No active maintenance.)
 
 # API Documentation
 
